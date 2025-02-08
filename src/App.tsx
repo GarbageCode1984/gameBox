@@ -13,9 +13,10 @@ function App() {
 const AppContainer = styled.div`
     height: 100vh;
 `;
-const Title = styled.div`
+const Title = styled.h1`
+    font-family: "CookieRun-Regular", sans-serif;
     font-size: 40px;
-    font-weight: bold;
+    font-weight: 700;
     color: #ff6767;
     flex-direction: column;
     display: flex;

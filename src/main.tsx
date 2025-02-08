@@ -2,8 +2,8 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.tsx";
 import React from "react";
-import { GlobalStyles } from "./style/GlobalStyles.ts";
 import MemoryCard from "./pages/MemoryCard/MemoryCard.tsx";
+import { GlobalStyles } from "./style/GlobalStyles";
 
 const router = createBrowserRouter([
     {
