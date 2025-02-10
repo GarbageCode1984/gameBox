@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom";
 import styled from "styled-components";
+import ThumbnailGallery from "./components/MemoryCard/ThumbnailGallery/ThumbnailGallery";
 
 function App() {
     return (
         <AppContainer>
             <Title>Game Box!</Title>
-            <Link to="/memory-game">메모리 게임</Link>
+            <ThumbnailGallery />
         </AppContainer>
     );
 }
@@ -15,7 +15,7 @@ const AppContainer = styled.div`
 `;
 const Title = styled.h1`
     font-family: "CookieRun-Regular", sans-serif;
-    font-size: 40px;
+    font-size: 82px;
     font-weight: 700;
     color: #ff6767;
     flex-direction: column;
