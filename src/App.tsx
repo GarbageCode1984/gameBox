@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import ThumbnailGallery from "./components/MemoryCard/ThumbnailGallery/ThumbnailGallery";
+import ThumbnailGallery from "./pages/MemoryCard/ThumbnailGallery";
+import { colors } from "./constants";
 
 function App() {
     return (
@@ -15,9 +16,9 @@ const AppContainer = styled.div`
 `;
 const Title = styled.h1`
     font-family: "CookieRun-Regular", sans-serif;
-    font-size: 82px;
+    font-size: 68px;
     font-weight: 700;
-    color: #ff6767;
+    color: ${colors.RED_100};
     flex-direction: column;
     display: flex;
     text-align: center;
