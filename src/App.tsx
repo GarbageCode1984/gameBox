@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import ThumbnailGallery from "./pages/MemoryCard/ThumbnailGallery";
+import ThumbnailGallery from "./pages/ThumbnailGallery";
 import { colors } from "./constants";
 
 function App() {

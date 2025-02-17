@@ -9,25 +9,27 @@ import card5 from "../../assets/MemoryCard/Card/card5.png";
 import card6 from "../../assets/MemoryCard/Card/card6.png";
 import card7 from "../../assets/MemoryCard/Card/card7.png";
 import card8 from "../../assets/MemoryCard/Card/card8.png";
+import ResetButton from "../../components/ResetButton";
 
 interface Image {
     id: number;
     src: string;
+    uniqueKey: number;
 }
 const images: Image[] = [
-    { id: 1, src: card1 },
-    { id: 2, src: card2 },
-    { id: 3, src: card3 },
-    { id: 4, src: card4 },
-    { id: 5, src: card5 },
-    { id: 6, src: card6 },
-    { id: 7, src: card7 },
-    { id: 8, src: card8 },
+    { id: 1, src: card1, uniqueKey: 0 },
+    { id: 2, src: card2, uniqueKey: 0 },
+    { id: 3, src: card3, uniqueKey: 0 },
+    { id: 4, src: card4, uniqueKey: 0 },
+    { id: 5, src: card5, uniqueKey: 0 },
+    { id: 6, src: card6, uniqueKey: 0 },
+    { id: 7, src: card7, uniqueKey: 0 },
+    { id: 8, src: card8, uniqueKey: 0 },
 ];
 
 const generateCards = (): Image[] => {
     const doubleImages = [...images, ...images];
-    return doubleImages.sort(() => Math.random() - 0.5);
+    return doubleImages.map((image, index) => ({ ...image, uniqueKey: index })).sort(() => Math.random() - 0.5);
 };
 
 function MemoryGame() {
@@ -51,18 +53,31 @@ function MemoryGame() {
         }
     }, [flippedIndices, cards]);
 
+    const resetGame = () => {
+        setCards(generateCards());
+        setFlippedIndices([]);
+        setMatchedIndices([]);
+        setIsClickable(true);
+    };
+
     const handleCardClick = (index: number) => {
-        if (flippedIndices.length < 2 && !flippedIndices.includes(index) && !matchedIndices.includes(index)) {
+        if (
+            isClickable &&
+            flippedIndices.length < 2 &&
+            !flippedIndices.includes(index) &&
+            !matchedIndices.includes(index)
+        ) {
             setFlippedIndices((prev) => [...prev, index]);
         }
     };
 
     return (
         <Container>
+            <ResetButton onClick={resetGame} />
             <Board>
                 {cards.map((card, index) => (
                     <Card
-                        key={card.id}
+                        key={card.uniqueKey}
                         id={index}
                         image={card.src}
                         isFlipped={flippedIndices.includes(index) || matchedIndices.includes(index)}
