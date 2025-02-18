@@ -9,7 +9,7 @@ import card5 from "../../assets/MemoryCard/Card/card5.png";
 import card6 from "../../assets/MemoryCard/Card/card6.png";
 import card7 from "../../assets/MemoryCard/Card/card7.png";
 import card8 from "../../assets/MemoryCard/Card/card8.png";
-import ResetButton from "../../components/ResetButton";
+import ResetButton from "../../components/MemoryCard/ResetButton";
 
 interface Image {
     id: number;
@@ -37,13 +37,23 @@ function MemoryGame() {
     const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
     const [matchedIndices, setMatchedIndices] = useState<number[]>([]);
     const [isClickable, setIsClickable] = useState(true);
+    const [score, setScore] = useState(0);
+    const [highScore, setHighScore] = useState(0);
 
     useEffect(() => {
+        const storedHighScore = localStorage.getItem("highScore");
+        if (storedHighScore) {
+            setHighScore(Number(storedHighScore));
+        }
+
         if (flippedIndices.length === 2) {
             setIsClickable(false);
             const [firstIndex, secondIndex] = flippedIndices;
             if (cards[firstIndex].id === cards[secondIndex].id) {
                 setMatchedIndices((prev) => [...prev, firstIndex, secondIndex]);
+                setScore((prev) => prev + 300);
+            } else {
+                setScore((prev) => prev - 50);
             }
             const timeoutId = setTimeout(() => {
                 setFlippedIndices([]);
@@ -54,11 +64,25 @@ function MemoryGame() {
     }, [flippedIndices, cards]);
 
     const resetGame = () => {
+        if (score > highScore) {
+            localStorage.setItem("highScore", String(score));
+        }
+
         setCards(generateCards());
         setFlippedIndices([]);
         setMatchedIndices([]);
         setIsClickable(true);
+        setScore(0);
     };
+
+    useEffect(() => {
+        if (matchedIndices.length === cards.length) {
+            if (score > highScore) {
+                setHighScore(score);
+                localStorage.setItem("highScore", String(score));
+            }
+        }
+    }, [matchedIndices, cards, score, highScore]);
 
     const handleCardClick = (index: number) => {
         if (
@@ -73,6 +97,8 @@ function MemoryGame() {
 
     return (
         <Container>
+            <ScoreBoard>점수: {score}</ScoreBoard>
+            <HighScoreBoard>최고 점수: {highScore}</HighScoreBoard>
             <ResetButton onClick={resetGame} />
             <Board>
                 {cards.map((card, index) => (
@@ -94,6 +120,17 @@ const Container = styled.div`
     justify-content: center;
     align-items: center;
     height: 100vh;
+`;
+
+const ScoreBoard = styled.div`
+    font-size: 24px;
+    margin-bottom: 20px;
+    background-color: #fff;
+`;
+
+const HighScoreBoard = styled.div`
+    font-size: 24px;
+    margin-bottom: 20px;
 `;
 
 const Board = styled.div`

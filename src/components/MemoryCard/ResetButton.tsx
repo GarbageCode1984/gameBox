@@ -5,12 +5,12 @@ interface ResetButtonProps {
 }
 
 function ResetButton({ onClick }: ResetButtonProps) {
-    return <Button onClick={onClick}>리셋 버튼</Button>;
+    return <Button onClick={onClick}>다시하기</Button>;
 }
 
 const Button = styled.button`
     position: absolute;
-    top: 15%;
+    bottom: 10%;
     margin-bottom: 20px;
     padding: 10px 20px;
     font-size: 16px;
