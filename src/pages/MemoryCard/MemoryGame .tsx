@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import Card from "../../components/MemoryCard/Card";
 import card1 from "../../assets/MemoryCard/Card/card1.png";
@@ -10,26 +10,27 @@ import card6 from "../../assets/MemoryCard/Card/card6.png";
 import card7 from "../../assets/MemoryCard/Card/card7.png";
 import card8 from "../../assets/MemoryCard/Card/card8.png";
 import ResetButton from "../../components/MemoryCard/ResetButton";
+import { v4 as uuidv4 } from "uuid";
 
 interface Image {
     id: number;
     src: string;
-    uniqueKey: number;
+    uniqueKey: string;
 }
 const images: Image[] = [
-    { id: 1, src: card1, uniqueKey: 0 },
-    { id: 2, src: card2, uniqueKey: 0 },
-    { id: 3, src: card3, uniqueKey: 0 },
-    { id: 4, src: card4, uniqueKey: 0 },
-    { id: 5, src: card5, uniqueKey: 0 },
-    { id: 6, src: card6, uniqueKey: 0 },
-    { id: 7, src: card7, uniqueKey: 0 },
-    { id: 8, src: card8, uniqueKey: 0 },
+    { id: 1, src: card1, uniqueKey: "" },
+    { id: 2, src: card2, uniqueKey: "" },
+    { id: 3, src: card3, uniqueKey: "" },
+    { id: 4, src: card4, uniqueKey: "" },
+    { id: 5, src: card5, uniqueKey: "" },
+    { id: 6, src: card6, uniqueKey: "" },
+    { id: 7, src: card7, uniqueKey: "" },
+    { id: 8, src: card8, uniqueKey: "" },
 ];
 
 const generateCards = (): Image[] => {
     const doubleImages = [...images, ...images];
-    return doubleImages.map((image, index) => ({ ...image, uniqueKey: index })).sort(() => Math.random() - 0.5);
+    return doubleImages.map((image) => ({ ...image, uniqueKey: uuidv4() })).sort(() => Math.random() - 0.5);
 };
 
 function MemoryGame() {
@@ -40,33 +41,27 @@ function MemoryGame() {
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
 
-    useEffect(() => {
-        const storedHighScore = localStorage.getItem("highScore");
-        if (storedHighScore) {
-            setHighScore(Number(storedHighScore));
-        }
-
-        if (flippedIndices.length === 2) {
-            setIsClickable(false);
-            const [firstIndex, secondIndex] = flippedIndices;
+    const handleCardMatch = useCallback(
+        (indices: number[]) => {
+            const [firstIndex, secondIndex] = indices;
             if (cards[firstIndex].id === cards[secondIndex].id) {
                 setMatchedIndices((prev) => [...prev, firstIndex, secondIndex]);
                 setScore((prev) => prev + 300);
             } else {
-                setScore((prev) => prev - 50);
+                setScore((prev) => Math.max(prev - 50, 0));
             }
+
             const timeoutId = setTimeout(() => {
                 setFlippedIndices([]);
                 setIsClickable(true);
             }, 1000);
             return () => clearTimeout(timeoutId);
-        }
-    }, [flippedIndices, cards]);
+        },
+        [cards]
+    );
 
     const resetGame = () => {
-        if (score > highScore) {
-            localStorage.setItem("highScore", String(score));
-        }
+        updateHighScore();
 
         setCards(generateCards());
         setFlippedIndices([]);
@@ -74,15 +69,6 @@ function MemoryGame() {
         setIsClickable(true);
         setScore(0);
     };
-
-    useEffect(() => {
-        if (matchedIndices.length === cards.length) {
-            if (score > highScore) {
-                setHighScore(score);
-                localStorage.setItem("highScore", String(score));
-            }
-        }
-    }, [matchedIndices, cards, score, highScore]);
 
     const handleCardClick = (index: number) => {
         if (
@@ -94,6 +80,33 @@ function MemoryGame() {
             setFlippedIndices((prev) => [...prev, index]);
         }
     };
+
+    const updateHighScore = () => {
+        if (score > highScore) {
+            setHighScore(score);
+            localStorage.setItem("highScore", String(score));
+        }
+    };
+
+    useEffect(() => {
+        const storedHighScore = localStorage.getItem("highScore");
+        if (storedHighScore) {
+            setHighScore(Number(storedHighScore));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (flippedIndices.length === 2) {
+            setIsClickable(false);
+            handleCardMatch(flippedIndices);
+        }
+    }, [flippedIndices, handleCardMatch]);
+
+    useEffect(() => {
+        if (matchedIndices.length === cards.length) {
+            updateHighScore();
+        }
+    }, [matchedIndices, cards, score, highScore]);
 
     return (
         <Container>
