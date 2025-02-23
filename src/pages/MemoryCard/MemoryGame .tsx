@@ -41,14 +41,19 @@ function MemoryGame() {
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
 
+    const updateScore = useCallback((isCorrect: boolean) => {
+        setScore((prev) => (isCorrect ? prev + 300 : Math.max(prev - 50, 0)));
+    }, []);
+
     const handleCardMatch = useCallback(
         (indices: number[]) => {
             const [firstIndex, secondIndex] = indices;
-            if (cards[firstIndex].id === cards[secondIndex].id) {
+            const isCorrect = cards[firstIndex]?.id === cards[secondIndex]?.id;
+
+            updateScore(isCorrect);
+
+            if (isCorrect) {
                 setMatchedIndices((prev) => [...prev, firstIndex, secondIndex]);
-                setScore((prev) => prev + 300);
-            } else {
-                setScore((prev) => Math.max(prev - 50, 0));
             }
 
             const timeoutId = setTimeout(() => {
@@ -57,7 +62,7 @@ function MemoryGame() {
             }, 1000);
             return () => clearTimeout(timeoutId);
         },
-        [cards]
+        [cards, updateScore]
     );
 
     const resetGame = () => {
@@ -81,12 +86,12 @@ function MemoryGame() {
         }
     };
 
-    const updateHighScore = () => {
+    const updateHighScore = useCallback(() => {
         if (score > highScore) {
-            setHighScore(score);
             localStorage.setItem("highScore", String(score));
+            setHighScore(score);
         }
-    };
+    }, [score, highScore]);
 
     useEffect(() => {
         const storedHighScore = localStorage.getItem("highScore");
@@ -103,10 +108,10 @@ function MemoryGame() {
     }, [flippedIndices, handleCardMatch]);
 
     useEffect(() => {
-        if (matchedIndices.length === cards.length) {
+        if (matchedIndices.length === 16) {
             updateHighScore();
         }
-    }, [matchedIndices, cards, score, highScore]);
+    }, [matchedIndices, cards.length, updateHighScore]);
 
     return (
         <Container>
