@@ -9,7 +9,6 @@ import card5 from "../../assets/MemoryCard/Card/card5.png";
 import card6 from "../../assets/MemoryCard/Card/card6.png";
 import card7 from "../../assets/MemoryCard/Card/card7.png";
 import card8 from "../../assets/MemoryCard/Card/card8.png";
-import ResetButton from "../../components/MemoryCard/ResetButton";
 import { v4 as uuidv4 } from "uuid";
 
 interface Image {
@@ -115,9 +114,10 @@ function MemoryGame() {
 
     return (
         <Container>
-            <ScoreBoard>점수: {score}</ScoreBoard>
-            <HighScoreBoard>최고 점수: {highScore}</HighScoreBoard>
-            <ResetButton onClick={resetGame} />
+            <ScoreBoardWrapper>
+                <ScoreBoard>점수: {score}</ScoreBoard>
+                <HighScoreBoard>최고 점수: {highScore}</HighScoreBoard>
+            </ScoreBoardWrapper>
             <Board>
                 {cards.map((card, index) => (
                     <Card
@@ -129,26 +129,43 @@ function MemoryGame() {
                     />
                 ))}
             </Board>
+            <ResetButton onClick={resetGame}>다시하기</ResetButton>
         </Container>
     );
 }
 
 const Container = styled.div`
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
 `;
+const ScoreBoardWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+`;
 
 const ScoreBoard = styled.div`
+    margin-right: 20px;
     font-size: 24px;
     margin-bottom: 20px;
-    background-color: #fff;
 `;
 
 const HighScoreBoard = styled.div`
     font-size: 24px;
     margin-bottom: 20px;
+    display: flex;
+`;
+
+const ResetButton = styled.button`
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
 `;
 
 const Board = styled.div`
