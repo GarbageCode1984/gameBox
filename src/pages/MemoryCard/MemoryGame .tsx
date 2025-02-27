@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import Card from "../../components/MemoryCard/Card";
 import card1 from "../../assets/MemoryCard/Card/card1.png";
 import card2 from "../../assets/MemoryCard/Card/card2.png";
@@ -10,6 +10,7 @@ import card6 from "../../assets/MemoryCard/Card/card6.png";
 import card7 from "../../assets/MemoryCard/Card/card7.png";
 import card8 from "../../assets/MemoryCard/Card/card8.png";
 import { v4 as uuidv4 } from "uuid";
+import { colors } from "../../constants";
 
 interface Image {
     id: number;
@@ -26,6 +27,14 @@ const images: Image[] = [
     { id: 7, src: card7, uniqueKey: "" },
     { id: 8, src: card8, uniqueKey: "" },
 ];
+
+const GlobalStyle = createGlobalStyle`
+    @import url('https://fonts.googleapis.com/css2?family=Cookie+Run&display=swap');
+
+    body {
+        font-family: "CookieRun-Regular", sans-serif;
+    }
+`;
 
 const generateCards = (): Image[] => {
     const doubleImages = [...images, ...images];
@@ -113,24 +122,27 @@ function MemoryGame() {
     }, [matchedIndices, cards.length, updateHighScore]);
 
     return (
-        <Container>
-            <ScoreBoardWrapper>
-                <ScoreBoard>점수: {score}</ScoreBoard>
-                <HighScoreBoard>최고 점수: {highScore}</HighScoreBoard>
-            </ScoreBoardWrapper>
-            <Board>
-                {cards.map((card, index) => (
-                    <Card
-                        key={card.uniqueKey}
-                        id={index}
-                        image={card.src}
-                        isFlipped={flippedIndices.includes(index) || matchedIndices.includes(index)}
-                        onClick={handleCardClick}
-                    />
-                ))}
-            </Board>
-            <ResetButton onClick={resetGame}>다시하기</ResetButton>
-        </Container>
+        <>
+            <GlobalStyle />
+            <Container>
+                <ScoreBoardWrapper>
+                    <ScoreBoard>점수: {score}</ScoreBoard>
+                    <HighScoreBoard>최고 점수: {highScore}</HighScoreBoard>
+                </ScoreBoardWrapper>
+                <Board>
+                    {cards.map((card, index) => (
+                        <Card
+                            key={card.uniqueKey}
+                            id={index}
+                            image={card.src}
+                            isFlipped={flippedIndices.includes(index) || matchedIndices.includes(index)}
+                            onClick={handleCardClick}
+                        />
+                    ))}
+                </Board>
+                <ResetButton onClick={resetGame}>다시하기</ResetButton>
+            </Container>
+        </>
     );
 }
 
@@ -151,21 +163,32 @@ const ScoreBoard = styled.div`
     margin-right: 20px;
     font-size: 24px;
     margin-bottom: 20px;
+    color: ${colors.BLUE_500};
 `;
 
 const HighScoreBoard = styled.div`
     font-size: 24px;
     margin-bottom: 20px;
     display: flex;
+    color: ${colors.RED_500};
 `;
 
 const ResetButton = styled.button`
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 20px;
     cursor: pointer;
     margin-top: 35px;
     display: flex;
     justify-content: center;
+    border-radius: 5px;
+    background-color: ${colors.BACK_RED};
+    color: ${colors.WHITE};
+    border: none;
+    transition: all 0.2s;
+
+    &:hover {
+        background-color: ${colors.RED_300};
+    }
 `;
 
 const Board = styled.div`
