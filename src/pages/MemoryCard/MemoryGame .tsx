@@ -48,6 +48,7 @@ function MemoryGame() {
     const [isClickable, setIsClickable] = useState(true);
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
+    const [showFront, setShowFront] = useState(true);
 
     const updateScore = useCallback((isCorrect: boolean) => {
         setScore((prev) => (isCorrect ? prev + 300 : Math.max(prev - 50, 0)));
@@ -73,6 +74,13 @@ function MemoryGame() {
         [cards, updateScore]
     );
 
+    const updateHighScore = useCallback(() => {
+        if (score > highScore) {
+            localStorage.setItem("highScore", String(score));
+            setHighScore(score);
+        }
+    }, [score, highScore]);
+
     const resetGame = () => {
         updateHighScore();
 
@@ -81,6 +89,11 @@ function MemoryGame() {
         setMatchedIndices([]);
         setIsClickable(true);
         setScore(0);
+        setShowFront(true);
+
+        setTimeout(() => {
+            setShowFront(false);
+        }, 2000);
     };
 
     const handleCardClick = (index: number) => {
@@ -93,13 +106,6 @@ function MemoryGame() {
             setFlippedIndices((prev) => [...prev, index]);
         }
     };
-
-    const updateHighScore = useCallback(() => {
-        if (score > highScore) {
-            localStorage.setItem("highScore", String(score));
-            setHighScore(score);
-        }
-    }, [score, highScore]);
 
     useEffect(() => {
         const storedHighScore = localStorage.getItem("highScore");
