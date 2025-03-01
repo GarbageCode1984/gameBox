@@ -49,19 +49,20 @@ function MemoryGame() {
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(0);
     const [showFront, setShowFront] = useState(true);
+    const [isResetting, setIsResetting] = useState(false);
 
-    const updateScore = useCallback((isCorrect: boolean) => {
-        setScore((prev) => (isCorrect ? prev + 300 : Math.max(prev - 50, 0)));
+    const updateScore = useCallback((isMatch: boolean) => {
+        setScore((prev) => (isMatch ? prev + 300 : Math.max(prev - 50, 0)));
     }, []);
 
     const handleCardMatch = useCallback(
         (indices: number[]) => {
             const [firstIndex, secondIndex] = indices;
-            const isCorrect = cards[firstIndex]?.id === cards[secondIndex]?.id;
+            const isMatch = cards[firstIndex]?.id === cards[secondIndex]?.id;
 
-            updateScore(isCorrect);
+            updateScore(isMatch);
 
-            if (isCorrect) {
+            if (isMatch) {
                 setMatchedIndices((prev) => [...prev, firstIndex, secondIndex]);
             }
 
@@ -81,9 +82,7 @@ function MemoryGame() {
         }
     }, [score, highScore]);
 
-    const resetGame = () => {
-        updateHighScore();
-
+    const initializeGame = useCallback(() => {
         setCards(generateCards());
         setFlippedIndices([]);
         setMatchedIndices([]);
@@ -91,10 +90,20 @@ function MemoryGame() {
         setScore(0);
         setShowFront(true);
 
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
             setShowFront(false);
+            setIsResetting(false);
         }, 2000);
-    };
+
+        return () => clearTimeout(timeoutId);
+    }, []);
+
+    const resetGame = useCallback(() => {
+        if (isResetting) return;
+        setIsResetting(true);
+        updateHighScore();
+        initializeGame();
+    }, [updateHighScore, initializeGame, isResetting]);
 
     const handleCardClick = (index: number) => {
         if (
@@ -112,7 +121,8 @@ function MemoryGame() {
         if (storedHighScore) {
             setHighScore(Number(storedHighScore));
         }
-    }, []);
+        initializeGame();
+    }, [initializeGame]);
 
     useEffect(() => {
         if (flippedIndices.length === 2) {
@@ -143,6 +153,7 @@ function MemoryGame() {
                             image={card.src}
                             isFlipped={flippedIndices.includes(index) || matchedIndices.includes(index)}
                             onClick={handleCardClick}
+                            showFront={showFront}
                         />
                     ))}
                 </Board>

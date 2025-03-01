@@ -6,12 +6,13 @@ interface CardProps {
     image: string;
     isFlipped: boolean;
     onClick: (id: number) => void;
+    showFront: boolean;
 }
 
-function Card({ id, image, isFlipped, onClick }: CardProps) {
+function Card({ id, image, isFlipped, onClick, showFront }: CardProps) {
     return (
         <CardContainer onClick={() => onClick(id)}>
-            <CardInner isFlipped={isFlipped}>
+            <CardInner isFlipped={isFlipped || showFront}>
                 <CardFront>
                     <CardImage src={image} alt={`Card ${id}`} />
                 </CardFront>
