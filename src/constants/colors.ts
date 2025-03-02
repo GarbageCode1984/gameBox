@@ -6,7 +6,7 @@ const colors = {
     RED_100: "#ff6767",
     RED_300: "#ff2828",
     RED_500: "#d72727ed",
-    BACK_RED: "#ff8787",
+    GRAY_300: "#adb5bd",
 };
 
 export { colors };

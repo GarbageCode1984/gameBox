@@ -157,7 +157,9 @@ function MemoryGame() {
                         />
                     ))}
                 </Board>
-                <ResetButton onClick={resetGame}>다시하기</ResetButton>
+                <ResetButton disabled={isResetting} onClick={resetGame}>
+                    다시하기
+                </ResetButton>
             </Container>
         </>
     );
@@ -198,13 +200,15 @@ const ResetButton = styled.button`
     display: flex;
     justify-content: center;
     border-radius: 5px;
-    background-color: ${colors.BACK_RED};
-    color: ${colors.WHITE};
+    background-color: ${colors.RED_300};
     border: none;
     transition: all 0.2s;
+    color: ${colors.WHITE};
 
-    &:hover {
-        background-color: ${colors.RED_300};
+    &:disabled {
+        background-color: ${colors.GRAY_300};
+        cursor: not-allowed;
+        opacity: 0.7;
     }
 `;
 
