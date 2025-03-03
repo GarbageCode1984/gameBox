@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import Card from "../../components/MemoryCard/Card";
 import card1 from "../../assets/MemoryCard/Card/card1.png";
@@ -50,6 +50,7 @@ function MemoryGame() {
     const [highScore, setHighScore] = useState(0);
     const [showFront, setShowFront] = useState(true);
     const [isResetting, setIsResetting] = useState(false);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const updateScore = useCallback((isMatch: boolean) => {
         setScore((prev) => (isMatch ? prev + 300 : Math.max(prev - 50, 0)));
@@ -83,6 +84,8 @@ function MemoryGame() {
     }, [score, highScore]);
 
     const initializeGame = useCallback(() => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
         setCards(generateCards());
         setFlippedIndices([]);
         setMatchedIndices([]);
@@ -90,12 +93,14 @@ function MemoryGame() {
         setScore(0);
         setShowFront(true);
 
-        const timeoutId = setTimeout(() => {
+        timeoutRef.current = setTimeout(() => {
             setShowFront(false);
             setIsResetting(false);
         }, 2000);
 
-        return () => clearTimeout(timeoutId);
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        };
     }, []);
 
     const resetGame = useCallback(() => {
@@ -115,6 +120,12 @@ function MemoryGame() {
             setFlippedIndices((prev) => [...prev, index]);
         }
     };
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        };
+    }, []);
 
     useEffect(() => {
         const storedHighScore = localStorage.getItem("highScore");
