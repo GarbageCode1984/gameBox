@@ -9,7 +9,7 @@ interface image {
 
 function ThumbnailGallery() {
     const images: image[] = [
-        { src: "/Thumbnail/test1.png", alt: "test1", path: "/memory-game" },
+        { src: "/Thumbnail/MemoryGame.png", alt: "MemoryGame", path: "/memory-game" },
         { src: "/Thumbnail/test2.png", alt: "test2", path: "/page1" },
         { src: "/Thumbnail/test3.png", alt: "test3", path: "/page1" },
         { src: "/Thumbnail/test4.png", alt: "test4", path: "/page1" },
